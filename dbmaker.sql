@@ -52,6 +52,7 @@ FOREIGN KEY (vendor_id) REFERENCES Vendor(vendorid)
 -- OrderedHistory table
 CREATE TABLE OrderedHistory (
 transactionid INT PRIMARY KEY AUTO_INCREMENT,
+cartid INT,
 timestamp TIMESTAMP,
 userid INT,
 book_id INT,
