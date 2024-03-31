@@ -16,7 +16,10 @@ e-commerce application as a project for the DBMS course
 2. Users:
 * userid INT PRIMARY KEY
 * username VARCHAR(255) NOT NULL
-* password VARCHAR(255) NOT NULL 
+* password VARCHAR(255) NOT NULL
+* passwordattempt VARCHAR(255)
+* logintries INT
+* loginsuccesful BOOLEAN
 * blocklogin BOOLEAN
 * addressid INT
 * paypalcoins INT
