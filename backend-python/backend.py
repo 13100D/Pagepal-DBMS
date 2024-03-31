@@ -1,7 +1,10 @@
-import sqlite3
 import time
+import mysql.connector
 
-# Connect to the SQLite database
-conn = sqlite3.connect('pagepal.db')
-cursor = conn.cursor()
+mydb = mysql.connector.connect(
+  host="localhost",
+  user="root",
+  password="testing_password",
+  database="pagepal"
+)
 
