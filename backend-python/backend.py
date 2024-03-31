@@ -16,7 +16,18 @@ def register(username, password):
     # Hash the password
     hashed_password = str(bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()))
     mycursor.execute("INSERT INTO Address (firstline, secondline, city, state, country, pincode) VALUES (NULL, NULL, NULL, NULL, NULL, NULL);")
+    print(mycursor.fetchone())
+    if mycursor.rowcount > 0:
+        print("Inserted {} rows.".format(mycursor.rowcount))
+    else:
+        print("No rows were inserted.")
     mycursor.execute("INSERT INTO Users (username, password, passwordattempt, logintries, loginsuccesful, blocklogin, addressid, paypalcoins, productpreferencescart, vendor) VALUES (%s,%s,'',0,FALSE,FALSE,(SELECT LAST_INSERT_ID()),0,NULL,FALSE);",("'"+username+"'","'"+password+"'"))
+    print(mycursor.fetchone())
+    if mycursor.rowcount > 0:
+        print("Inserted {} rows.".format(mycursor.rowcount))
+    else:
+        print("No rows were inserted.")
+    mydb.commit()
     print("Registration successful!")
 
 
