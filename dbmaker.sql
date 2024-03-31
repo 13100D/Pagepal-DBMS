@@ -15,6 +15,7 @@ CREATE TABLE Users (
 userid INT PRIMARY KEY,
 username VARCHAR(255) NOT NULL,
 password VARCHAR(255) NOT NULL,
+blocklogin BOOLEAN,
 addressid INT,
 paypalcoins INT,
 productpreferencescart TEXT,

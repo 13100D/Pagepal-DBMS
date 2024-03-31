@@ -16,7 +16,8 @@ e-commerce application as a project for the DBMS course
 2. Users:
 * userid INT PRIMARY KEY
 * username VARCHAR(255) NOT NULL
-* password VARCHAR(255) NOT NULL
+* password VARCHAR(255) NOT NULL 
+* blocklogin BOOLEAN
 * addressid INT
 * paypalcoins INT
 * productpreferences TEXT
@@ -27,7 +28,7 @@ e-commerce application as a project for the DBMS course
 3. Vendor:
 * vendorid INT PRIMARY KEY
 * name VARCHAR(255)
-** addressid INT
+* addressid INT
 * FOREIGN KEY (addressid) REFERENCES Address(addressid)
 4. RefurbishmentCenter:
 * center_id INT PRIMARY KEY

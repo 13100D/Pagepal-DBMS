@@ -8,3 +8,9 @@
 -in sql?
 #add required password table
 #add trigger to block login after failed attempts and reqquired blocked bool
+
+
+
+#DONE
+password hash in user table
+add login blocked bool in usertable
