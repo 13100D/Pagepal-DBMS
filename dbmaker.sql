@@ -53,6 +53,7 @@ FOREIGN KEY (vendor_id) REFERENCES Vendor(vendorid)
 CREATE TABLE OrderedHistory (
 transactioniduserid INT AUTO_INCREMENT,
 timestamp TIMESTAMP,
+userid INT,
 book_id INT,
 book_quantity INT,
 total_cost DECIMAL(10, 2),
