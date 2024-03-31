@@ -7,7 +7,7 @@ mydb = mysql.connector.connect(
   host="localhost",
   user="root",
   password="testing_password",
-  database="pagepal"
+  database="PagePal"
 )
 
 mycursor = mydb.cursor()
@@ -16,13 +16,13 @@ def register(username, password):
     # Hash the password
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     print("askjd")
-    mycursor.execute('''INSERT INTO Address (firstline, secondline, city, state, country, pincode)
+    print('''INSERT INTO Address (firstline, secondline, city, state, country, pincode)
 VALUES (NULL, NULL, NULL, NULL, NULL, NULL);''')
-    mycursor.execute('''INSERT INTO Users (username, password, passwordattempt, logintries, loginsuccesful, blocklogin, addressid, paypalcoins, productpreferencescart, vendor)
+    print('''INSERT INTO Users (username, password, passwordattempt, logintries, loginsuccesful, blocklogin, addressid, paypalcoins, productpreferencescart, vendor)
 VALUES (
     -- Provide values for the new user
-    "+username+", -- Username
-    "+hashed_password+", -- Initial password
+    '''+username+''', -- Username
+    '''+hashed_password+''', -- Initial password
     '', -- Password attempt (initially empty)
     0, -- Initial login tries
     FALSE, -- Initial login successful status
@@ -31,7 +31,7 @@ VALUES (
     0, -- Initial PayPal coins balance
     NULL, -- Initial product preferences cart (can be NULL or empty)
     FALSE -- Not a vendor (change to TRUE if user is a vendor)
-);''')
+    );''')
 
     print("Registration successful!")
 
