@@ -12,7 +12,7 @@ pincode VARCHAR(20)
 );
 -- Users table
 CREATE TABLE Users (
-userid INT PRIMARY KEY,
+userid INT PRIMARY KEY AUTO_INCREMENT,
 username VARCHAR(255) NOT NULL,
 password VARCHAR(255) NOT NULL,
 passwordattempt VARCHAR(255),
@@ -27,7 +27,7 @@ FOREIGN KEY (addressid) REFERENCES Address(addressid)
 );
 -- Vendor table
 CREATE TABLE Vendor (
-vendorid INT PRIMARY KEY,
+vendorid INT PRIMARY KEY AUTO_INCREMENT,
 name VARCHAR(255),
 contact VARCHAR(100),
 addressid INT,
@@ -35,14 +35,14 @@ FOREIGN KEY (addressid) REFERENCES Address(addressid)
 );
 -- RefurbishmentCenter table
 CREATE TABLE RefurbishmentCenter (
-center_id INT PRIMARY KEY,
+center_id INT PRIMARY KEY AUTO_INCREMENT,
 addressid INT,
 contact VARCHAR(100),
 FOREIGN KEY (addressid) REFERENCES Address(addressid)
 );
 -- Catalogue table
 CREATE TABLE Catalogue (
-book_id INT PRIMARY KEY,
+book_id INT PRIMARY KEY AUTO_INCREMENT,
 book_name VARCHAR(255),
 quantity INT,
 vendor_id INT,
@@ -51,7 +51,7 @@ FOREIGN KEY (vendor_id) REFERENCES Vendor(vendorid)
 );
 -- OrderedHistory table
 CREATE TABLE OrderedHistory (
-transactioniduserid INT,
+transactioniduserid INT AUTO_INCREMENT,
 timestamp TIMESTAMP,
 book_id INT,
 book_quantity INT,
@@ -62,7 +62,7 @@ FOREIGN KEY (book_id) REFERENCES Catalogue(book_id)
 );
 -- DonatedHistory table
 CREATE TABLE DonatedHistory (
-transactionid INT PRIMARY KEY,
+transactionid INT PRIMARY KEY AUTO_INCREMENT,
 userid INT,
 timestamp TIMESTAMP,
 book_id INT,
