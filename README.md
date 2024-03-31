@@ -49,6 +49,7 @@ e-commerce application as a project for the DBMS course
   
 6. OrderedHistory:
 * transactionid INT PRIMARY KEY
+* cartID INT
 * userid INT
 * timestamp TIMESTAMP
 * book_id INT
