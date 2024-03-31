@@ -15,23 +15,8 @@ mycursor = mydb.cursor()
 def register(username, password):
     # Hash the password
     hashed_password = str(bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()))
-    mycursor.execute(f'''INSERT INTO Address (firstline, secondline, city, state, country, pincode)
-VALUES (NULL, NULL, NULL, NULL, NULL, NULL);''')
-    print(f'''INSERT INTO Users (username, password, passwordattempt, logintries, loginsuccesful, blocklogin, addressid, paypalcoins, productpreferencescart, vendor)
-VALUES (
-    -- Provide values for the new user
-    '''+"'"+username+"'"+''', -- Username
-    '''+"'"+password+"'"+''', -- Initial password
-    '', -- Password attempt (initially empty)
-    0, -- Initial login tries
-    FALSE, -- Initial login successful status
-    FALSE, -- Initial login block status
-    (SELECT LAST_INSERT_ID()), -- Example addressid (replace with appropriate value)
-    0, -- Initial PayPal coins balance
-    NULL, -- Initial product preferences cart (can be NULL or empty)
-    FALSE -- Not a vendor (change to TRUE if user is a vendor)
-    );''')
-
+    mycursor.execute("INSERT INTO Address (firstline, secondline, city, state, country, pincode) VALUES (NULL, NULL, NULL, NULL, NULL, NULL);")
+    mycursor.execute("INSERT INTO Users (username, password, passwordattempt, logintries, loginsuccesful, blocklogin, addressid, paypalcoins, productpreferencescart, vendor) VALUES (%s,%s,'',0,FALSE,FALSE,(SELECT LAST_INSERT_ID()),0,NULL,FALSE);",("'"+username+"'","'"+password+"'"))
     print("Registration successful!")
 
 
@@ -39,7 +24,22 @@ VALUES (
 def login(username, password):
     hashed_password = str(bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()))
     #not used rn kek
-
+    loginsuccess=False
+    print("loginprocedurestarted")
+    startts = time.time()
+    while (time.time()-startts<=3):
+        mycursor.execute("SELECT loginsuccesful,userid FROM Users WHERE username = %s AND password = %s", (username, password))
+        row = mycursor.fetchone()
+        userid=row[1]
+        if row[0]:
+            mycursor.execute("UPDATE Users SET loginsuccesful = FALSE WHERE username = %s AND password =%s", (username,password))
+            loginsuccess=True
+            break
+        time.sleep(0.1)
+    if (not loginsuccess):
+        print("invalid credentials")
+    
+        
 
 while True:
         print("\n1. Register")
