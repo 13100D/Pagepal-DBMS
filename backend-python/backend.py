@@ -17,11 +17,11 @@ def register(username, password):
     hashed_password = str(bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()))
     mycursor.execute(f'''INSERT INTO Address (firstline, secondline, city, state, country, pincode)
 VALUES (NULL, NULL, NULL, NULL, NULL, NULL);''')
-    mycursor.execute(f'''INSERT INTO Users (username, password, passwordattempt, logintries, loginsuccesful, blocklogin, addressid, paypalcoins, productpreferencescart, vendor)
+    print(f'''INSERT INTO Users (username, password, passwordattempt, logintries, loginsuccesful, blocklogin, addressid, paypalcoins, productpreferencescart, vendor)
 VALUES (
     -- Provide values for the new user
-    '''+username+''', -- Username
-    '''+hashed_password+''', -- Initial password
+    '''+"'"+username+"'"+''', -- Username
+    '''+"'"+password+"'"+''', -- Initial password
     '', -- Password attempt (initially empty)
     0, -- Initial login tries
     FALSE, -- Initial login successful status
@@ -37,15 +37,8 @@ VALUES (
 
 
 def login(username, password):
-    # Check if the username exists in the database
-    if username in database:
-        # Check if the password matches the hashed password in the database
-        if bcrypt.checkpw(password.encode('utf-8'), database[username]):
-            print("Login successful!")
-        else:
-            print("Invalid password!")
-    else:
-        print("Username not found!")
+    hashed_password = str(bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()))
+    #not used rn kek
 
 
 while True:
