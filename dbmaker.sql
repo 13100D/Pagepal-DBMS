@@ -74,3 +74,28 @@ status VARCHAR(100),
 FOREIGN KEY (userid) REFERENCES Users(userid),
 FOREIGN KEY (book_id) REFERENCES Catalogue(book_id)
 );
+CREATE TRIGGER login_attempt
+BEFORE UPDATE ON Users
+FOR EACH ROW
+BEGIN
+    DECLARE attempt_count INT;
+    DECLARE block_time INT;
+
+    IF NEW.passwordattempt = NEW.password THEN
+        SET NEW.loginsuccessful = TRUE;
+        SET NEW.blocklogin = FALSE;
+        SET NEW.logintries = 0;
+    ELSE
+        SET attempt_count = NEW.logintries + 1;
+
+        IF attempt_count >= 3 THEN
+            SET NEW.blocklogin = TRUE;
+            SET block_time = UNIX_TIMESTAMP() + 60;
+            SET NEW.blocklogintill = block_time;
+        ELSE
+            SET NEW.blocklogin = FALSE;
+        END IF;
+
+        SET NEW.logintries = attempt_count;
+    END IF;
+END;
