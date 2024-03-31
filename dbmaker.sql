@@ -44,6 +44,7 @@ FOREIGN KEY (addressid) REFERENCES Address(addressid)
 CREATE TABLE Catalogue (
 book_id INT PRIMARY KEY AUTO_INCREMENT,
 book_name VARCHAR(255),
+price INT,
 quantity INT,
 vendor_id INT,
 status VARCHAR(100),
