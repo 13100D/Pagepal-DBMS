@@ -14,11 +14,10 @@ mycursor = mydb.cursor()
 
 def register(username, password):
     # Hash the password
-    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-    print("askjd")
-    print('''INSERT INTO Address (firstline, secondline, city, state, country, pincode)
+    hashed_password = str(bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()))
+    mycursor.execute(f'''INSERT INTO Address (firstline, secondline, city, state, country, pincode)
 VALUES (NULL, NULL, NULL, NULL, NULL, NULL);''')
-    print('''INSERT INTO Users (username, password, passwordattempt, logintries, loginsuccesful, blocklogin, addressid, paypalcoins, productpreferencescart, vendor)
+    mycursor.execute(f'''INSERT INTO Users (username, password, passwordattempt, logintries, loginsuccesful, blocklogin, addressid, paypalcoins, productpreferencescart, vendor)
 VALUES (
     -- Provide values for the new user
     '''+username+''', -- Username
