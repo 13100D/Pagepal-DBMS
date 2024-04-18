@@ -102,6 +102,7 @@ def login(username, password):
         print("loginprocedurestarted")
         #send password creds to database
         #still pending
+        mycursor.execute("UPDATE Users SET passwordattempt = %s WHERE username = %s", (password,username))
         startts = time.time()
         while (time.time()-startts<=3):
             mycursor.execute("SELECT loginsuccesful,userid FROM Users WHERE username = %s AND password = %s", (username, password))
@@ -117,7 +118,7 @@ def login(username, password):
         else:
             user_inside(userid)
     else:
-        print("too many attempts try after %s seconds", blocklogintill-time.time())
+        print("too many attempts try after", blocklogintill-time.time(), "seconds")
     
         
 

@@ -100,3 +100,46 @@ BEGIN
         SET NEW.logintries = attempt_count;
     END IF;
 END;
+
+DELIMITER //
+
+CREATE TRIGGER login_attempt
+BEFORE UPDATE ON Users
+FOR EACH ROW
+BEGIN
+    DECLARE attempt_count INT;
+    DECLARE block_time INT;
+
+    IF OLD.passwordattempt = NEW.password THEN
+        SET NEW.loginsuccesful = TRUE;
+        SET NEW.logintries = 0;
+    ELSE
+        SET attempt_count = NEW.logintries + 1;
+        IF attempt_count >= 3 THEN
+            SET block_time = UNIX_TIMESTAMP() + 60;
+            SET NEW.blocklogintill = block_time;
+        END IF; 
+        SET NEW.logintries = attempt_count;
+    END IF;
+END//
+
+DELIMITER ;
+
+
+
+
+
+DELIMITER //
+
+CREATE TRIGGER update_password_attempt
+BEFORE UPDATE ON Users
+FOR EACH ROW
+BEGIN
+    IF NEW.passwordattempt != OLD.passwordattempt 
+        AND NEW.passwordattempt = NEW.password 
+        AND UNIX_TIMESTAMP() > NEW.blocklogintill THEN
+        SET NEW.loginsuccesful = 1;
+    END IF;
+END//
+
+DELIMITER ;
