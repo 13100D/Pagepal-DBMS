@@ -3,12 +3,16 @@ import mysql.connector
 import bcrypt
 
 
-mydb = mysql.connector.connect(
-  host="localhost",
-  user="root",
-  password="testing_password",
-  database="PagePal"
-)
+try:
+    mydb = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="testing_password",
+    database="PagePal"
+    )
+except:
+    print("Database connection failed!")
+    exit()
 
 mycursor = mydb.cursor()
 
@@ -87,11 +91,13 @@ def show_catalog(userid, cart):
 def user_inside(userid):
     cart = [[]]
     while True:
+        print("\n------------℄------------")
         print('''PagePal में आपका स्वागत है!
             1. View Catalogue
             2. View Cart
             3. Logout
             ''')
+        print("------------℄------------\n")
         choice = input("Enter your choice: ")
         if (choice == "1"):
             show_catalog(userid, cart)
@@ -153,9 +159,11 @@ def login(username, password):
         
 
 while True:
-        print("\n1. Register")
+        print("\n------------℄------------")
+        print("1. Register")
         print("2. Login")
         print("3. Quit")
+        print("------------℄------------\n")
         choice = input("Enter your choice: ")
 
         if choice == '1':
@@ -163,6 +171,7 @@ while True:
             password = input("Enter password: ")
             register(username, password)
         elif choice == '2':
+            print("Note: Usernames are NOT case-sensitive.")
             username = input("Enter username: ")
             password = input("Enter password: ")
             login(username, password)
