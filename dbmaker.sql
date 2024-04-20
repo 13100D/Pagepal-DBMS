@@ -143,3 +143,8 @@ BEGIN
 END//
 
 DELIMITER ;
+
+ALTER TABLE Users
+MODIFY COLUMN username VARCHAR(255) NOT NULL,
+ADD CONSTRAINT chk_username_length CHECK (CHAR_LENGTH(username) >= 3),
+ADD CONSTRAINT chk_username_start_alpha CHECK (username REGEXP '^[A-Za-z]');

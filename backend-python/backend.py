@@ -12,13 +12,43 @@ mydb = mysql.connector.connect(
 
 mycursor = mydb.cursor()
 
+# def register(username, password):
+#     # Hash the password
+#     hashed_password = str(bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()))
+#     mycursor.execute("INSERT INTO Address (firstline, secondline, city, state, country, pincode) VALUES (NULL, NULL, NULL, NULL, NULL, NULL);")
+#     mycursor.execute("INSERT INTO Users (username, password, passwordattempt, logintries, loginsuccesful, blocklogintill, addressid, paypalcoins, productpreferencescart, vendor) VALUES (%s,%s,'',0,FALSE,%s,(SELECT LAST_INSERT_ID()),0,NULL,FALSE);",(username,password,int(time.time())))
+#     mydb.commit()
+#     print("Registration successful!")
+
 def register(username, password):
-    # Hash the password
-    hashed_password = str(bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()))
-    mycursor.execute("INSERT INTO Address (firstline, secondline, city, state, country, pincode) VALUES (NULL, NULL, NULL, NULL, NULL, NULL);")
-    mycursor.execute("INSERT INTO Users (username, password, passwordattempt, logintries, loginsuccesful, blocklogintill, addressid, paypalcoins, productpreferencescart, vendor) VALUES (%s,%s,'',0,FALSE,%s,(SELECT LAST_INSERT_ID()),0,NULL,FALSE);",(username,password,int(time.time())))
-    mydb.commit()
-    print("Registration successful!")
+    if username is None or len(username) < 3:
+        print("Error: Minimum of 3 characters are required for the username.")
+        return
+    elif not username[0].isalpha():
+        print("Error: Username can only begin with alphabets.")
+        return
+
+    try:
+        mydb.start_transaction()
+        mycursor.execute("SELECT COUNT(*) FROM Users WHERE username = %s", (username,))
+        result = mycursor.fetchone()
+        if result and result[0] > 0:
+            print("Error: Username already exists. Please choose a different username.")
+            mydb.rollback()
+            return
+        mycursor.execute("INSERT INTO Address (firstline, secondline, city, state, country, pincode) VALUES (NULL, NULL, NULL, NULL, NULL, NULL);")
+        mycursor.execute("INSERT INTO Users (username, password, passwordattempt, logintries, loginsuccesful, blocklogintill, addressid, paypalcoins, productpreferencescart, vendor) VALUES (%s,%s,'',0,FALSE,%s,(SELECT LAST_INSERT_ID()),0,NULL,FALSE);",(username,password,int(time.time())))
+        mydb.commit()
+        print("Registration successful!")
+    except mysql.connector.Error as err:
+        if "chk_username_length" in str(err):
+            print("Error: Minimum of 3 characters are required for the username.")
+        elif "chk_username_start_alpha" in str(err):
+            print("Error: Username can only begin with alphabets.")
+        else:
+            print("Error during registration:", err)
+        mydb.rollback()
+
 
 def show_catalog(userid, cart):
     mycursor.execute("SELECT book_id, book_name, price, quantity FROM Catalogue WHERE quantity > 0;")
