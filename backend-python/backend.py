@@ -138,6 +138,7 @@ while True:
             login(username, password)
         elif choice == '3':
             print("Goodbye!")
+            mydb.close()
             break
         else:
             print("Invalid choice!")
