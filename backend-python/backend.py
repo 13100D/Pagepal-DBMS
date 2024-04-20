@@ -120,6 +120,7 @@ def show_catalog(userid, cart):
         else:
             mycursor.execute("UPDATE Catalogue SET quantity = quantity - %s WHERE book_id = %s;", (item_quantity, item_buying[0]))
             mycursor.execute("INSERT INTO OrderedHistory (userid, book_id, book_quantity, total_cost) VALUES (%s, %s, %s, %s);", (userid, item_buying[0], item_quantity, item_buying[2]*item_quantity))
+            mydb.commit()
             print("Purchase successful!")
     elif choice == "2":
         item = input("Enter the item number: ")
@@ -166,8 +167,10 @@ def user_inside(userid):
                         continue
                     else:
                         cost += item[2]*item[3]
+                        cart.remove(item)
                     mycursor.execute("UPDATE Catalogue SET quantity = quantity - %s WHERE book_id = %s;", (item[1], item[0]))
                     mycursor.execute("INSERT INTO OrderedHistory (userid, book_id, book_quantity, total_cost) VALUES (%s, %s, %s, %s);", (userid, item[0], item[1], item[2]*item[3]))
+                mydb.commit()
                 print("Purchase of Rs. %s successful!\nThank you for your purchase!", cost)
 
         elif (choice == "3"):
