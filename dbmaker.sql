@@ -42,13 +42,14 @@ FOREIGN KEY (addressid) REFERENCES Address(addressid)
 );
 -- Catalogue table
 CREATE TABLE Catalogue (
-book_id INT PRIMARY KEY AUTO_INCREMENT,
-book_name VARCHAR(255),
-price INT,
-quantity INT,
-vendor_id INT,
-status VARCHAR(100),
-FOREIGN KEY (vendor_id) REFERENCES Vendor(vendorid)
+    book_id INT PRIMARY KEY AUTO_INCREMENT,
+    book_name VARCHAR(255),
+    price INT,
+    quantity INT,
+    genre VARCHAR(100), 
+    vendor_id INT,
+    status VARCHAR(100),
+    FOREIGN KEY (vendor_id) REFERENCES Vendor(vendorid)
 );
 -- OrderedHistory table
 CREATE TABLE OrderedHistory (
@@ -63,18 +64,19 @@ status VARCHAR(100),
 FOREIGN KEY (userid) REFERENCES Users(userid),
 FOREIGN KEY (book_id) REFERENCES Catalogue(book_id)
 );
--- DonatedHistory table
 CREATE TABLE DonatedHistory (
-transactionid INT PRIMARY KEY AUTO_INCREMENT,
-userid INT,
-timestamp TIMESTAMP,
-book_id INT,
-book_quantity INT,
-total_cost DECIMAL(10, 2),
-status VARCHAR(100),
-FOREIGN KEY (userid) REFERENCES Users(userid),
-FOREIGN KEY (book_id) REFERENCES Catalogue(book_id)
+    transactionid INT PRIMARY KEY AUTO_INCREMENT,
+    userid INT,
+    timestamp TIMESTAMP,
+    book_id INT,
+    book_quantity INT,
+    total_cost DECIMAL(10, 2),
+    collection_date DATE,
+    status VARCHAR(100),
+    FOREIGN KEY (userid) REFERENCES Users(userid),
+    FOREIGN KEY (book_id) REFERENCES Catalogue(book_id)
 );
+
 CREATE TRIGGER login_attempt
 BEFORE UPDATE ON Users
 FOR EACH ROW

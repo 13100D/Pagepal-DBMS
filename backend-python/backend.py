@@ -1,6 +1,7 @@
 import time
 import mysql.connector
 import bcrypt
+from datetime import datetime, timedelta
 
 
 try:
@@ -23,6 +24,49 @@ mycursor = mydb.cursor()
 #     mycursor.execute("INSERT INTO Users (username, password, passwordattempt, logintries, loginsuccesful, blocklogintill, addressid, paypalcoins, productpreferencescart, vendor) VALUES (%s,%s,'',0,FALSE,%s,(SELECT LAST_INSERT_ID()),0,NULL,FALSE);",(username,password,int(time.time())))
 #     mydb.commit()
 #     print("Registration successful!")
+
+def book_donation_page(userid):
+    print("Welcome to the donation page!")
+    print("Please enter the details of the book you would like to donate.\n")
+    book_name = input("Book Name: ")
+    author = input("Author: ")
+    genre = input("Genre: ")
+    quantity = int(input("Quantity: "))
+    price = 50
+
+    if not book_name or not genre or quantity <= 0:
+        print("Enter valid details")
+        return
+
+    collection_date_str = input("Select a date for book collection (YYYY-MM-DD): ")
+    try:
+        collection_date = datetime.strptime(collection_date_str, "%Y-%m-%d").date()
+    except ValueError:
+        print("Invalid date format. Please enter date in YYYY-MM-DD format.")
+        return
+    status = None
+    if collection_date == datetime.now().date():
+        status = "collected"
+        print("Your delivery has been collected, refurbished and is ready to be sold")
+        time.sleep(3)
+
+        mycursor.execute("SELECT book_id, quantity, price FROM Catalogue WHERE book_name = %s", (book_name,))
+        existing_book = mycursor.fetchone()
+
+        if existing_book:
+            b_id, existing_quantity, price = existing_book
+            mycursor.execute("UPDATE Catalogue SET quantity = %s WHERE book_id = %s", (existing_quantity + quantity, b_id))
+            print("\nBook added to catalogue!\n")
+        else:
+            mycursor.execute("INSERT INTO Catalogue (book_name, author, genre, quantity) VALUES (%s, %s, %s, %s)", (book_name, author, genre, quantity))
+    else:
+        print("Your delivery will be collected on", collection_date)
+        status = "pending"
+    
+    mycursor.execute("INSERT INTO DonatedHistory (userid, timestamp, book_id, book_quantity, total_cost, collection_date, status) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                       (userid, datetime.now(), b_id, quantity, price, collection_date, "Pending"))
+    mydb.commit()
+
 
 def register(username, password):
     if username is None or len(username) < 3:
@@ -55,14 +99,14 @@ def register(username, password):
 
 
 def show_catalog(userid, cart):
-    mycursor.execute("SELECT book_id, book_name, price, quantity FROM Catalogue WHERE quantity > 0;")
+    mycursor.execute("SELECT book_id, book_name, price, quantity, genre FROM Catalogue WHERE quantity > 0;")
     available_items = mycursor.fetchall()
-    print("Available Items:")
+    print("Available Items:\n")
     i = 1
     for item in available_items:
-        print(f"{i}. Name: {item[1]}, Price: {item[2]}, Quantity: {item[3]}")
+        print(f"{i}. Name: {item[1]}, Price: {item[2]}, Quantity: {item[3]}, Genre: {item[4]}")
         i+=1
-    print('''What would you like to do?
+    print('''\nWhat would you like to do?
           1. Buy book
           2. Add to cart
           3. Go back''')
@@ -92,15 +136,17 @@ def user_inside(userid):
     cart = [[]]
     while True:
         print("\n------------℄------------")
-        print('''PagePal में आपका स्वागत है!
+        print('''📖 PagePal में आपका स्वागत है! 📖
             1. View Catalogue
             2. View Cart
-            3. Logout
+            3. Donate!
+            4. Logout
             ''')
         print("------------℄------------\n")
         choice = input("Enter your choice: ")
         if (choice == "1"):
             show_catalog(userid, cart)
+
         elif choice == "2":
             for item in cart:
                 mycursor.execute("SELECT book_id, book_name, price, quantity FROM Catalogue WHERE book_id = %s;", (item[0],))
@@ -123,8 +169,11 @@ def user_inside(userid):
                     mycursor.execute("UPDATE Catalogue SET quantity = quantity - %s WHERE book_id = %s;", (item[1], item[0]))
                     mycursor.execute("INSERT INTO OrderedHistory (userid, book_id, book_quantity, total_cost) VALUES (%s, %s, %s, %s);", (userid, item[0], item[1], item[2]*item[3]))
                 print("Purchase of Rs. %s successful!\nThank you for your purchase!", cost)
-                
+
         elif (choice == "3"):
+            book_donation_page(userid)
+
+        elif (choice == "4"):
             print("Goodbye!")
             break
 
@@ -167,11 +216,11 @@ while True:
         choice = input("Enter your choice: ")
 
         if choice == '1':
+            print("Note: Usernames are NOT case-sensitive.")
             username = input("Enter username: ")
             password = input("Enter password: ")
             register(username, password)
         elif choice == '2':
-            print("Note: Usernames are NOT case-sensitive.")
             username = input("Enter username: ")
             password = input("Enter password: ")
             login(username, password)
